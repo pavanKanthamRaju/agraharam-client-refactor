@@ -65,8 +65,8 @@ const OrderReviewPage = () => {
         },
         handler: async function (response) {
           try {
-            const verifyRes = await axios.post(
-              `${process.env.REACT_APP_BASE_URL}/api/payment/verify-payment`,
+            const verifyRes = await apiClient.post(
+              `/payment/verify-payment`,
               {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
@@ -259,5 +259,3 @@ const OrderReviewPage = () => {
 };
 
 export default OrderReviewPage;
-
-

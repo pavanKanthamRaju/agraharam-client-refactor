@@ -8,17 +8,17 @@ import googleIcon from '../../../assets/google-icon.png'
 const SigninForm = ({ onSubmit }) => {
   const base_path = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
-  const { loginUser, redirectPath, setRedirectPath } = useAuth();
+  const { loginUser, redirectPath, setRedirectPath , setLoading} = useAuth();
   const loginWithGoogle = useGoogleLogin({
     onSuccess: async (response) => {
       try {
+        setLoading(true); // 🔥 Show spinner when API starts
         const res = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
           headers: {
             Authorization: `Bearer ${response.access_token}`,
           },
         });
         console.log("userData " + res.data)
-        debugger
         const user = await axios.post(
           `${base_path}/api/auth/google-login`,
           { userInfo: res.data }
@@ -27,10 +27,13 @@ const SigninForm = ({ onSubmit }) => {
         console.log("✅ Google user data:", user.data);
         loginUser(user.data);
         navigate(redirectPath || "/dashboard", { replace: true });
+
         setRedirectPath(null);
         // setUser(res.data);
       } catch (err) {
         console.error("❌ Error fetching user info:", err);
+      }finally {
+        setLoading(false); // 🔥 Ensure spinner is hidden even if there's an error
       }
     },
     onError: (err) => console.error("❌ Login Failed:", err),
