@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // Create an instance
-const apiUrl =process.env.REACT_APP_BASE_URL;
-//const apiUrl = process.env.REACT_APP_BACKUP_URL;
+//const apiUrl =process.env.REACT_APP_BASE_URL;
+const apiUrl = process.env.REACT_APP_BACKUP_URL;
 console.log("backup url"+ apiUrl)
 const apiClient = axios.create({
   // baseURL: 'http://172.20.10.2:5080/api', // base API path

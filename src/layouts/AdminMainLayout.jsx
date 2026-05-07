@@ -8,11 +8,12 @@ import ItemsPaage from "../pages/admin/ItemsPaage";
 import OrdersPage from "../pages/admin/OrdersPage";
 import AnnouncementsPage from "../pages/admin/AnnouncementsPage"
 import { Menu } from "lucide-react";
+import PdfUploader from "../pages/admin/PdfUploader";
 
 // Helper component for Navigation Links
 const NavLink = ({ to, children, setSidebarOpen }) => {
   const location = useLocation();
-  // Check if active: 
+  // Check if active:
   // 1. simple includes check
   // 2. Special case for 'Orders' which is the default redirect from '/admin'
   const isActive =
@@ -22,7 +23,7 @@ const NavLink = ({ to, children, setSidebarOpen }) => {
   return (
     <Link
       to={to}
-      className={`px-3 py-2 rounded font-medium transition-colors duration-200 
+      className={`px-3 py-2 rounded font-medium transition-colors duration-200
         ${isActive
           ? "bg-blue-50 text-blue-600 shadow-sm"
           : "text-white hover:bg-blue-50 hover:text-blue-600"
@@ -82,6 +83,9 @@ const AdminMainLayout = () => {
             <NavLink to="/admin/announcements" setSidebarOpen={setSidebarOpen}>
               Announcements
             </NavLink>
+              <NavLink to="/admin/pdfUplod" setSidebarOpen={setSidebarOpen}>
+              Upload Rage Pdf
+            </NavLink>
           </nav>
         </aside>
 
@@ -93,7 +97,7 @@ const AdminMainLayout = () => {
             <Route path="poojas" element={<Poojas />} />
             <Route path="items" element={<ItemsPaage />} />
             <Route path="announcements" element={<AnnouncementsPage />} />
-
+            <Route path="pdfUplod" element={<PdfUploader />} />
 
 
             PoojaItems

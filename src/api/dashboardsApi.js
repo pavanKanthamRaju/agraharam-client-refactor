@@ -1,3 +1,4 @@
+import axios from "axios"
 import apiClient from "../utils/appClient";
 let poojas;
 const getPoojaById = async (id) => {
@@ -14,7 +15,7 @@ const getPoojaById = async (id) => {
         error.response?.data?.message || error.message || "Something went wrong...";
       throw new Error(message);
     }
-    
+
 }
 const createPooja = async (poojaData) => {
     try {
@@ -32,11 +33,11 @@ const createPooja = async (poojaData) => {
       throw new Error(message);
     }
   };
-  
+
   // Update Pooja (JSON payload)
   const updatePooja = async (id, poojaData) => {
     if (!id) throw new Error("Pooja ID is required for update");
-  
+
     try {
       const response = await apiClient.put(`/poojas/${id}`, poojaData, {
         headers: {
@@ -53,8 +54,8 @@ const createPooja = async (poojaData) => {
     }
   };
   const getAllOrders = async (id, poojaData) => {
-  
-  
+
+
     try {
       const response = await apiClient.get("/orders/getallOrders");
       return response.data;
@@ -99,7 +100,7 @@ const createPooja = async (poojaData) => {
       throw new Error(message);
     }
   };
-  
+
   const getAllItems = async (id, poojaData) => {
     try {
       const response = await apiClient.get("/items");
@@ -169,22 +170,85 @@ const createPooja = async (poojaData) => {
     const res = await apiClient.get("/announcements");
     return res.data.data;
   };
-  
+
    const createAnnouncement = async (data) => {
     const res = await apiClient.post("/announcements", data);
     return res.data.data;
   };
-  
+
    const updateAnnouncement = async (id, data) => {
     const res = await apiClient.put(`/announcements/${id}`, data);
     return res.data.data;
   };
-  
+
    const deleteAnnouncement = async (id) => {
     const res = await apiClient.delete(`/announcements/${id}`);
     return res.data;
   };
-  
- 
-  
-export { poojas, getPoojaById, getPoojas,createPooja,updatePooja,getAllOrders, createItem,updateItem,deleteItem,getAllItems,getPoojaItemsByid, addPoojaItem, deletePoojaItem,getAnnouncements, createAnnouncement, updateAnnouncement, deleteAnnouncement}
+
+  const uploadPdf = async(formData) =>{
+    const response = await apiClient.post(
+      "/askAgraharam/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response
+  }
+
+  const askAgraharam = async(question)=>{
+           const response = apiClient.post("/askAgraharam", {
+        question,
+      });
+      return response
+  }
+
+
+ const getAccessToken = async () => {
+  try {
+    const response = await axios.post(
+      "https://api.prokerala.com/token",
+      new URLSearchParams({
+        grant_type: "client_credentials",
+        client_id: process.env.PRO_KRL_CLIENT_ID,
+        client_secret: process.env.PRO_KRL_CLIENT_SECRET,
+      }),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+
+    console.log("TOKEN:", response.data);
+    return response.data.access_token;
+
+  } catch (error) {
+    console.error("ERROR:", error.response?.data || error.message);
+  }
+};
+  const getPanchang = async () => {
+  const token = await getAccessToken();
+
+  const res = await axios.get(
+    "https://api.prokerala.com/v2/astrology/panchang",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        datetime: "2026-05-06T06:00:00+05:30",
+        latitude: 16.5,
+        longitude: 80.6,
+      },
+    }
+  );
+
+  return res.data;
+};
+
+
+export { poojas, getPoojaById, getPoojas,createPooja,updatePooja,getAllOrders, createItem,updateItem,deleteItem,getAllItems,getPoojaItemsByid, addPoojaItem, deletePoojaItem,getAnnouncements, createAnnouncement, updateAnnouncement, deleteAnnouncement, uploadPdf, askAgraharam, getPanchang}

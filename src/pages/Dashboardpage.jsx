@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getPoojas, getAnnouncements } from "../api/dashboardsApi";
 import { motion } from "framer-motion";
+import DailyPanchang from "./DailyPanchang";
+import AskChat from './AskChat';
 
 const Spinner = () => (
   <div className="flex justify-center items-center h-screen bg-white">
@@ -136,6 +138,9 @@ const DashboardPage = () => {
         </div>
       )}
 
+<div className="my-6">
+        <DailyPanchang />
+      </div>
       {/* 🔸 Popup/Header Notice */}
       {popupAnnouncementHeaderText && (
         <motion.div
@@ -156,6 +161,7 @@ const DashboardPage = () => {
           <PoojaCard key={pooja.id} pooja={pooja} />
         ))}
       </div>
+      <AskChat />
     </>
   );
 };

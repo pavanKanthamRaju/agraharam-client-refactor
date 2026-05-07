@@ -14,6 +14,7 @@ import OrdersPage from './pages/OrdersPage';
 import AdminRoute from './routes/AdminRoute';
 import AdminMainLayout from './layouts/AdminMainLayout';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+
 function App() {
   return (
     <GoogleOAuthProvider clientId="624201486661-caq1et7an3otskdrq5ua7dbh4rk9qsdi.apps.googleusercontent.com">
@@ -32,6 +33,7 @@ function App() {
 
         </Routes>
       </BrowserRouter>
+
     </GoogleOAuthProvider>
   );
 }
