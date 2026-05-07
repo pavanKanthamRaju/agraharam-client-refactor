@@ -139,7 +139,7 @@ const DashboardPage = () => {
       )}
 
 <div className="my-6">
-        <DailyPanchang />
+        {/* <DailyPanchang /> */}
       </div>
       {/* 🔸 Popup/Header Notice */}
       {popupAnnouncementHeaderText && (
