@@ -29,24 +29,42 @@ const OrdersPage = () => {
         <p className="text-center text-gray-600">No orders found.</p>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {orders.map((order) => (
-            <div
-              key={order.order_id}
-              className="bg-white shadow-md rounded-2xl p-4 border border-gray-100"
-            >
-              <h2 className="text-xl font-semibold text-orange-600">
-                {order.pooja_name}
-              </h2>
-              <p className="text-gray-700 text-sm">{order.pooja_description}</p>
+          {orders.map((order) => {
+            let displayTitle = order.pooja_name || "Pooja Items Purchase";
+            let displayDesc = order.pooja_description || "Standalone Pooja Items Order";
+            let displayAddress = order.address;
 
-              <div className="mt-3 text-sm">
-                <p><strong>Amount:</strong> ₹{order.total_amount / 100}</p>
-                <p><strong>Date:</strong> {order.booking_date}</p>
-                <p><strong>Time:</strong> {order.booking_time}</p>
-                <p><strong>Address:</strong> {order.address}</p>
-                <p><strong>Payment:</strong> {order.payment_status}</p>
-                <p><strong>Transaction ID:</strong> {order.transaction_id}</p>
-              </div>
+            try {
+              if (order.address && order.address.startsWith("{")) {
+                const parsedAddress = JSON.parse(order.address);
+                if (parsedAddress.isStandaloneItems) {
+                  displayTitle = parsedAddress.items.map(i => `${i.name} (x${i.quantity})`).join(", ");
+                  displayDesc = parsedAddress.items.map(i => i.description || "Ritual samagri").join("; ");
+                  displayAddress = parsedAddress.deliveryAddress;
+                }
+              }
+            } catch (e) {
+              console.error("Error parsing address JSON:", e);
+            }
+
+            return (
+              <div
+                key={order.order_id}
+                className="bg-white shadow-md rounded-2xl p-4 border border-gray-100"
+              >
+                <h2 className="text-xl font-semibold text-orange-600">
+                  {displayTitle}
+                </h2>
+                <p className="text-gray-700 text-sm">{displayDesc}</p>
+
+                <div className="mt-3 text-sm">
+                  <p><strong>Amount:</strong> ₹{order.total_amount / 100}</p>
+                  <p><strong>Date:</strong> {order.booking_date}</p>
+                  <p><strong>Time:</strong> {order.booking_time}</p>
+                  <p><strong>Address:</strong> {displayAddress}</p>
+                  <p><strong>Payment:</strong> {order.payment_status}</p>
+                  <p><strong>Transaction ID:</strong> {order.transaction_id}</p>
+                </div>
 
               <div className="mt-4 text-right">
                 <span
@@ -59,7 +77,8 @@ const OrdersPage = () => {
                 </span>
               </div>
             </div>
-          ))}
+          );
+        })}
         </div>
       )}
     </div>
