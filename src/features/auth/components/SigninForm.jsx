@@ -6,7 +6,8 @@ import googleIcon from '../../../assets/google-icon.png'
 
 
 const SigninForm = ({ onSubmit }) => {
-  const base_path = process.env.REACT_APP_BASE_URL;
+  //const base_path = process.env.REACT_APP_BASE_URL;
+  const base_path = process.env.REACT_APP_BACKUP_URL;
   const navigate = useNavigate();
   const { loginUser, redirectPath, setRedirectPath , setLoading} = useAuth();
   const loginWithGoogle = useGoogleLogin({

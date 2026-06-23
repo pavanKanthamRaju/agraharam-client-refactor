@@ -13,6 +13,8 @@ import OrderReview from './pages/OrderReview';
 import OrdersPage from './pages/OrdersPage';
 import AdminRoute from './routes/AdminRoute';
 import AdminMainLayout from './layouts/AdminMainLayout';
+import BuyItemsPage from './pages/BuyItemsPage';
+import ItemsOrderReview from './pages/ItemsOrderReview';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 function App() {
@@ -28,6 +30,8 @@ function App() {
           <Route path="/checkout/:id" element={<ProtectedRoute ><MainLayout> <CheckoutPage /></MainLayout></ProtectedRoute>} />
           <Route path="/order-review" element={<ProtectedRoute><MainLayout><OrderReview /></MainLayout></ProtectedRoute>} />
           <Route path="/orders" element={<ProtectedRoute><MainLayout><OrdersPage /></MainLayout></ProtectedRoute>} />
+          <Route path="/buy-items" element={<MainLayout><BuyItemsPage /></MainLayout>} />
+          <Route path="/items-order-review" element={<ProtectedRoute><MainLayout><ItemsOrderReview /></MainLayout></ProtectedRoute>} />
           <Route path="/admin/*" element={<AdminRoute><AdminMainLayout /></AdminRoute>} />
 
 

@@ -82,6 +82,17 @@ const DashboardHeader = () => {
             </Link>
 
             <Link
+              to="/buy-items"
+              className={`font-semibold transition ${
+                location.pathname === "/buy-items"
+                  ? "text-red-700 underline underline-offset-4"
+                  : "text-gray-700 hover:text-red-700"
+              }`}
+            >
+              Buy Items
+            </Link>
+
+            <Link
               to="/orders"
               className={`font-semibold transition ${
                 location.pathname === "/orders"
