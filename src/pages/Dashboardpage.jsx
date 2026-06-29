@@ -105,7 +105,6 @@ const DashboardPage = () => {
   const popupAnnouncementHeaderText = announcements.find(a => a.name === "Header text");
   const popupAnnouncementHeading = announcements.find(a => a.name === "Header Heading ");
   const popupAnnouncementSubHeading = announcements.find(a => a.name === "Header Sub Heading");
-  debugger
 
   return (
     <>
@@ -138,7 +137,7 @@ const DashboardPage = () => {
         </div>
       )}
 
-<div className="my-6">
+      <div className="my-6">
         {/* <DailyPanchang /> */}
       </div>
       {/* 🔸 Popup/Header Notice */}
@@ -161,7 +160,7 @@ const DashboardPage = () => {
           <PoojaCard key={pooja.id} pooja={pooja} />
         ))}
       </div>
-      <AskChat />
+      {/* <AskChat /> */}
     </>
   );
 };

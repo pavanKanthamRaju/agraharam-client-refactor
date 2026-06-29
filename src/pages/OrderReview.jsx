@@ -65,6 +65,22 @@ const OrderReviewPage = () => {
         },
         handler: async function (response) {
           try {
+            const serializedAddress = JSON.stringify({
+              isPoojaBooking: true,
+              poojaName: orderData.poojaName,
+              deliveryAddress: address,
+              items: orderData.items?.map(item => ({
+                name: item.name,
+                quantity: item.quantity,
+                description: item.description || "Ritual samagri"
+              })) || [],
+              nivedyams: orderData.nivedyams?.map(item => ({
+                name: item.name,
+                quantity: item.quantity,
+                description: item.description || "Ritual offering"
+              })) || []
+            });
+
             const verifyRes = await apiClient.post(
               `/payment/verify-payment`,
               {
@@ -76,7 +92,7 @@ const OrderReviewPage = () => {
                 total_amount: amount,
                 booking_date: poojaDate,
                 booking_time: poojaTime,
-                address,
+                address: serializedAddress,
                 phone_number: phoneNumber,
               }
             );
@@ -148,7 +164,7 @@ const OrderReviewPage = () => {
           <p className="text-gray-700">{orderData.description}</p>
         </div>
 
-        <div className="mb-4">
+         <div className="mb-4">
           <h4 className="font-semibold text-orange-700 mb-2">Selected Items:</h4>
           <ul className="list-disc ml-5 text-gray-800">
             {orderData.items?.map((item, index) => (
@@ -159,8 +175,24 @@ const OrderReviewPage = () => {
           </ul>
         </div>
 
+        {orderData.nivedyams && orderData.nivedyams.length > 0 && (
+          <div className="mb-4">
+            <h4 className="font-semibold text-orange-700 mb-2">Selected Nivedyams:</h4>
+            <ul className="list-disc ml-5 text-gray-800">
+              {orderData.nivedyams.map((item, index) => (
+                <li key={index}>
+                  {item.name} ({item.quantity} {item.units || item.unit || "PCS"}) – ₹{item.price}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <div className="mb-4">
-          <p className="text-lg font-medium">Item Total: ₹{orderData.itemCost}</p>
+          <p className="text-lg font-medium">Item Total: ₹{orderData.itemCost || 0}</p>
+          {orderData.nivedyamCost > 0 && (
+            <p className="text-lg font-medium">Nivedyam Total: ₹{orderData.nivedyamCost}</p>
+          )}
           <p className="text-lg font-medium">Pooja Price: ₹{parseFloat(orderData.price)}</p>
           <p className="text-lg font-bold">Total Price: ₹{orderData.totalPrice}</p>
         </div>

@@ -33,13 +33,20 @@ const OrdersPage = () => {
             let displayTitle = order.pooja_name || "Pooja Items Purchase";
             let displayDesc = order.pooja_description || "Standalone Pooja Items Order";
             let displayAddress = order.address;
+            let parsedAddress = null;
 
             try {
               if (order.address && order.address.startsWith("{")) {
-                const parsedAddress = JSON.parse(order.address);
+                parsedAddress = JSON.parse(order.address);
                 if (parsedAddress.isStandaloneItems) {
                   displayTitle = parsedAddress.items.map(i => `${i.name} (x${i.quantity})`).join(", ");
                   displayDesc = parsedAddress.items.map(i => i.description || "Ritual samagri").join("; ");
+                  displayAddress = parsedAddress.deliveryAddress;
+                } else if (parsedAddress.isStandaloneNivedyams) {
+                  displayTitle = parsedAddress.nivedyams.map(i => `${i.name} (x${i.quantity})`).join(", ");
+                  displayDesc = parsedAddress.nivedyams.map(i => i.description || "Ritual offering").join("; ");
+                  displayAddress = parsedAddress.deliveryAddress;
+                } else if (parsedAddress.isPoojaBooking) {
                   displayAddress = parsedAddress.deliveryAddress;
                 }
               }
@@ -50,35 +57,68 @@ const OrdersPage = () => {
             return (
               <div
                 key={order.order_id}
-                className="bg-white shadow-md rounded-2xl p-4 border border-gray-100"
+                className="bg-white shadow-md rounded-2xl p-4 border border-gray-100 flex flex-col justify-between"
               >
-                <h2 className="text-xl font-semibold text-orange-600">
-                  {displayTitle}
-                </h2>
-                <p className="text-gray-700 text-sm">{displayDesc}</p>
+                <div>
+                  <h2 className="text-xl font-semibold text-orange-600">
+                    {displayTitle}
+                  </h2>
+                  <p className="text-gray-700 text-sm mt-1">{displayDesc}</p>
 
-                <div className="mt-3 text-sm">
-                  <p><strong>Amount:</strong> ₹{order.total_amount / 100}</p>
-                  <p><strong>Date:</strong> {order.booking_date}</p>
-                  <p><strong>Time:</strong> {order.booking_time}</p>
-                  <p><strong>Address:</strong> {displayAddress}</p>
-                  <p><strong>Payment:</strong> {order.payment_status}</p>
-                  <p><strong>Transaction ID:</strong> {order.transaction_id}</p>
+                  <div className="mt-3 text-sm space-y-1">
+                    <p><strong>Amount:</strong> ₹{order.total_amount / 100}</p>
+                    <p>
+                      <strong>
+                        {parsedAddress?.isStandaloneItems || parsedAddress?.isStandaloneNivedyams
+                          ? "Order Date:"
+                          : "Pooja Date:"}
+                      </strong>{" "}
+                      {order.booking_date}
+                    </p>
+                    <p>
+                      <strong>
+                        {parsedAddress?.isStandaloneItems || parsedAddress?.isStandaloneNivedyams
+                          ? "Order Time:"
+                          : "Pooja Time:"}
+                      </strong>{" "}
+                      {order.booking_time}
+                    </p>
+                    <p><strong>Address:</strong> {displayAddress}</p>
+                    <p><strong>Payment:</strong> {order.payment_status}</p>
+                    <p><strong>Transaction ID:</strong> {order.transaction_id}</p>
+                  </div>
+
+                  {parsedAddress?.isPoojaBooking && (
+                    <div className="mt-3 pt-3 border-t border-gray-100 space-y-2">
+                      {parsedAddress.items && parsedAddress.items.length > 0 && (
+                        <div className="text-xs text-gray-600 bg-orange-50/50 p-2 rounded border border-orange-100/50">
+                          <strong className="text-orange-800">Pooja Items:</strong>{" "}
+                          {parsedAddress.items.map(i => `${i.name} (x${i.quantity})`).join(", ")}
+                        </div>
+                      )}
+                      {parsedAddress.nivedyams && parsedAddress.nivedyams.length > 0 && (
+                        <div className="text-xs text-gray-600 bg-orange-50/50 p-2 rounded border border-orange-100/50">
+                          <strong className="text-orange-800">Nivedyams:</strong>{" "}
+                          {parsedAddress.nivedyams.map(i => `${i.name} (x${i.quantity})`).join(", ")}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
-              <div className="mt-4 text-right">
-                <span
-                  className={`px-3 py-1 text-xs font-semibold rounded-full ${order.payment_status === "success"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-yellow-100 text-yellow-700"
-                    }`}
-                >
-                  {order.payment_status}
-                </span>
+                <div className="mt-4 text-right">
+                  <span
+                    className={`px-3 py-1 text-xs font-semibold rounded-full ${order.payment_status === "success"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-yellow-100 text-yellow-700"
+                      }`}
+                  >
+                    {order.payment_status}
+                  </span>
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
         </div>
       )}
     </div>
