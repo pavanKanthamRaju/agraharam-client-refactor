@@ -250,5 +250,79 @@ const createPooja = async (poojaData) => {
   return res.data;
 };
 
+const getAllNivedyams = async () => {
+  try {
+    const response = await apiClient.get("/nivedyam");
+    return response.data;
+  } catch (error) {
+    const message = error.response?.data?.message || error.message || "Failed to fetch Nivedyams";
+    throw new Error(message);
+  }
+};
 
-export { poojas, getPoojaById, getPoojas,createPooja,updatePooja,getAllOrders, createItem,updateItem,deleteItem,getAllItems,getPoojaItemsByid, addPoojaItem, deletePoojaItem,getAnnouncements, createAnnouncement, updateAnnouncement, deleteAnnouncement, uploadPdf, askAgraharam, getPanchang}
+const createNivedyam = async (nivedyamData) => {
+  try {
+    const response = await apiClient.post("/nivedyam", nivedyamData);
+    return response.data;
+  } catch (error) {
+    const message = error.response?.data?.message || error.message || "Failed to create Nivedyam";
+    throw new Error(message);
+  }
+};
+
+const updateNivedyam = async (id, nivedyamData) => {
+  try {
+    const response = await apiClient.put(`/nivedyam/${id}`, nivedyamData);
+    return response.data;
+  } catch (error) {
+    const message = error.response?.data?.message || error.message || "Failed to update Nivedyam";
+    throw new Error(message);
+  }
+};
+
+const deleteNivedyam = async (id) => {
+  try {
+    const response = await apiClient.delete(`/nivedyam/${id}`);
+    return response.data;
+  } catch (error) {
+    const message = error.response?.data?.message || error.message || "Failed to delete Nivedyam";
+    throw new Error(message);
+  }
+};
+
+const getPoojaNivedyamsByPoojaId = async (poojaId) => {
+  try {
+    const response = await apiClient.get(`/poojaNivedyam/${poojaId}`);
+    return response.data;
+  } catch (error) {
+    const message = error.response?.data?.message || error.message || "Failed to fetch Pooja Nivedyams";
+    throw new Error(message);
+  }
+};
+
+const addPoojaNivedyam = async (poojaNivedyamData) => {
+  try {
+    const response = await apiClient.post("/poojaNivedyam", poojaNivedyamData);
+    return response.data;
+  } catch (error) {
+    const message = error.response?.data?.message || error.message || "Failed to add Pooja Nivedyam mapping";
+    throw new Error(message);
+  }
+};
+
+const deletePoojaNivedyam = async (id) => {
+  try {
+    const response = await apiClient.delete(`/poojaNivedyam/${id}`);
+    return response.data;
+  } catch (error) {
+    const message = error.response?.data?.message || error.message || "Failed to delete Pooja Nivedyam mapping";
+    throw new Error(message);
+  }
+};
+
+export {
+  poojas, getPoojaById, getPoojas, createPooja, updatePooja, getAllOrders,
+  createItem, updateItem, deleteItem, getAllItems, getPoojaItemsByid, addPoojaItem, deletePoojaItem,
+  getAnnouncements, createAnnouncement, updateAnnouncement, deleteAnnouncement, uploadPdf, askAgraharam, getPanchang,
+  getAllNivedyams, createNivedyam, updateNivedyam, deleteNivedyam, getPoojaNivedyamsByPoojaId, addPoojaNivedyam, deletePoojaNivedyam
+};

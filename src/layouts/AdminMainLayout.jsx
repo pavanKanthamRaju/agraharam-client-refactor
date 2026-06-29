@@ -9,6 +9,7 @@ import OrdersPage from "../pages/admin/OrdersPage";
 import AnnouncementsPage from "../pages/admin/AnnouncementsPage"
 import { Menu } from "lucide-react";
 import PdfUploader from "../pages/admin/PdfUploader";
+import NivedyamPage from "../pages/admin/NivedyamPage";
 
 // Helper component for Navigation Links
 const NavLink = ({ to, children, setSidebarOpen }) => {
@@ -77,8 +78,11 @@ const AdminMainLayout = () => {
             <NavLink to="/admin/poojas" setSidebarOpen={setSidebarOpen}>
               Poojas
             </NavLink>
-            <NavLink to="/admin/items" setSidebarOpen={setSidebarOpen}>
+             <NavLink to="/admin/items" setSidebarOpen={setSidebarOpen}>
               Items
+            </NavLink>
+            <NavLink to="/admin/nivedyam" setSidebarOpen={setSidebarOpen}>
+              Nivedyams
             </NavLink>
             <NavLink to="/admin/announcements" setSidebarOpen={setSidebarOpen}>
               Announcements
@@ -94,8 +98,9 @@ const AdminMainLayout = () => {
           <Routes>
             <Route path="" element={<Navigate to="orders" replace />} />
             <Route path="orders" element={<OrdersPage />} />
-            <Route path="poojas" element={<Poojas />} />
+             <Route path="poojas" element={<Poojas />} />
             <Route path="items" element={<ItemsPaage />} />
+            <Route path="nivedyam" element={<NivedyamPage />} />
             <Route path="announcements" element={<AnnouncementsPage />} />
             <Route path="pdfUplod" element={<PdfUploader />} />
 

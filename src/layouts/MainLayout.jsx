@@ -4,6 +4,10 @@ import DashboardFooter from '../components/DasboardFooter'
 
 
 const MainLayout = ({ children }) => {
+    const storedUser = localStorage.getItem("user");
+    const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+    const isCustomer = parsedUser && parsedUser.user && !parsedUser.user.isadmin;
+
     return (
         <div className="flex flex-col min-h-screen">
             {/* <header className='p-4 bg-gray-100 shadow'>
@@ -11,7 +15,9 @@ const MainLayout = ({ children }) => {
             </header> */}
            
             <DashboardHeader  />
-            <main className="flex-1 bg-[#fff3e0] pt-[89px] pb-[65px]">{children}</main>
+            <main className={`flex-1 bg-[#fff3e0] pb-[65px] ${isCustomer ? "pt-[139px]" : "pt-[89px]"}`}>
+                {children}
+            </main>
             <DashboardFooter />
           
         </div>

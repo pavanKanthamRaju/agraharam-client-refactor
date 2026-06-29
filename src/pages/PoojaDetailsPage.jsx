@@ -1,8 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getPoojaById, getPoojaItemsByid } from "../api/dashboardsApi";
+import { getPoojaById, getPoojaItemsByid, getPoojaNivedyamsByPoojaId } from "../api/dashboardsApi";
 import { useAppContext } from "../context/appContext"
 import PoojaItemsModal from "../components/PoojaItemsModal";
+import PoojaNivedyamsModal from "../components/PoojaNivedyamsModal";
 
 const PoojaDetailsPage = () => {
   const { id } = useParams();
@@ -10,9 +11,12 @@ const PoojaDetailsPage = () => {
   const [pooja, setPooja] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
   const [poojaItems, setPoojaItems] = useState([]);
+  const [selectedNivedyams, setSelectedNivedyams] = useState([]);
+  const [poojaNivedyams, setPoojaNivedyams] = useState([]);
 
   const { orderData, setOrderData, setPoojsSelectedItems } = useAppContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isNivedyamModalOpen, setIsNivedyamModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,8 +28,12 @@ const PoojaDetailsPage = () => {
         // Once we have pooja ID, fetch its items
         const itemsData = await getPoojaItemsByid(Number(id));
         setPoojaItems(itemsData);
+
+        // Fetch Pooja Nivedyams
+        const nivedyamsData = await getPoojaNivedyamsByPoojaId(Number(id));
+        setPoojaNivedyams(nivedyamsData || []);
       } catch (error) {
-        console.error("Error fetching pooja details or items:", error);
+        console.error("Error fetching pooja details, items or nivedyams:", error);
       }
     };
 
@@ -57,15 +65,20 @@ const PoojaDetailsPage = () => {
 
   const getItemTotal = () => {
     return selectedItems.reduce((total, item) => {
-      // Use parseFloat to convert the item.price string into a number
       const priceAsNumber = parseFloat(item.price);
-
-      // Check if the conversion resulted in a valid number (not NaN)
       if (!isNaN(priceAsNumber)) {
         return total + priceAsNumber;
       }
+      return total;
+    }, 0);
+  };
 
-      // If the price is invalid, just return the current total
+  const getNivedyamTotal = () => {
+    return selectedNivedyams.reduce((total, item) => {
+      const priceAsNumber = parseFloat(item.price);
+      if (!isNaN(priceAsNumber)) {
+        return total + priceAsNumber;
+      }
       return total;
     }, 0);
   };
@@ -78,8 +91,10 @@ const PoojaDetailsPage = () => {
       description: pooja.description,
       price: pooja.base_price,
       itemCost: getItemTotal(),
+      nivedyamCost: getNivedyamTotal(),
       totalPrice,
       items: selectedItems,
+      nivedyams: selectedNivedyams,
     }
     setOrderData(data);
     setPoojsSelectedItems(selectedItems);
@@ -87,7 +102,8 @@ const PoojaDetailsPage = () => {
   };
 
   const itemsPrice = selectedItems.reduce((sum, item) => sum + Number(item.price), 0);
-  const totalPrice = basePrice + itemsPrice;
+  const nivedyamsPrice = selectedNivedyams.reduce((sum, item) => sum + Number(item.price), 0);
+  const totalPrice = basePrice + itemsPrice + nivedyamsPrice;
 
   if (!pooja) {
     return (
@@ -165,6 +181,56 @@ const PoojaDetailsPage = () => {
               onConfirm={handleConfirmSelection}
               items={poojaItems}
               initialSelectedItems={selectedItems}
+            />
+
+            {/* Nivedyam Selection */}
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-lg font-semibold text-orange-700">Add Pooja Nivedyams (Optional):</h3>
+              </div>
+
+              <div className="bg-orange-50 rounded-lg p-4 border border-orange-100">
+                {selectedNivedyams.length > 0 ? (
+                  <div className="mb-3">
+                    <p className="text-sm text-gray-600 mb-2">Selected Nivedyams:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedNivedyams.map((item, idx) => (
+                        <span key={idx} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white text-orange-800 border border-orange-200 shadow-sm">
+                          {item.name}
+                        </span>
+                      ))}
+                      {selectedNivedyams.length > 3 && (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                          + more
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-sm mb-3">No nivedyam selected.</p>
+                )}
+
+                <button
+                  onClick={() => setIsNivedyamModalOpen(true)}
+                  className="w-full sm:w-auto bg-white border border-orange-300 text-orange-700 hover:bg-orange-50 hover:text-orange-800 font-medium py-2 px-4 rounded-md transition shadow-sm flex items-center justify-center gap-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  {selectedNivedyams.length > 0 ? "Edit Nivedyams" : "Add Nivedyams"}
+                </button>
+              </div>
+            </div>
+
+            <PoojaNivedyamsModal
+              isOpen={isNivedyamModalOpen}
+              onClose={() => setIsNivedyamModalOpen(false)}
+              onConfirm={(items) => {
+                setSelectedNivedyams(items);
+                setIsNivedyamModalOpen(false);
+              }}
+              items={poojaNivedyams}
+              initialSelectedItems={selectedNivedyams}
             />
           </div>
 

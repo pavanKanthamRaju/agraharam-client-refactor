@@ -161,6 +161,7 @@ import React, { useEffect, useState } from "react";
 import { getPoojas, createPooja, updatePooja } from "../../api/dashboardsApi";
 import CreatePoojaForm from "./components/CreatePoojaForm";
 import PoojaItemsForm from "./components/poojaItemsForm";
+import PoojaNivedyamsForm from "./components/poojaNivedyamsForm";
 import Modal from "./components/Modal";
 
 const Poojas = () => {
@@ -169,6 +170,7 @@ const Poojas = () => {
   const [filterdPoojas, setFilterdPoojas] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
   const [showPoojaItemDialog, setpoojaItemsDialog] = useState(false);
+  const [showPoojaNivedyamDialog, setShowPoojaNivedyamDialog] = useState(false);
   const [selectedPooja, setSelectedPooja] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false); // 🔥 Spinner state
@@ -176,6 +178,8 @@ const Poojas = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedPooja(null);
+    setpoojaItemsDialog(false);
+    setShowPoojaNivedyamDialog(false);
   };
 
   useEffect(() => {
@@ -220,10 +224,17 @@ const Poojas = () => {
     setpoojaItemsDialog(true);
   };
 
+  const handlePoojaNivedyams = (pooja) => {
+    setSelectedPooja(pooja);
+    setIsModalOpen(true);
+    setShowPoojaNivedyamDialog(true);
+  };
+
   const handleClose = () => {
     setShowDialog(false);
     setSelectedPooja(null);
     setpoojaItemsDialog(false);
+    setShowPoojaNivedyamDialog(false);
   };
 
   const handleSave = async (poojaData) => {
@@ -306,22 +317,32 @@ const Poojas = () => {
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-2 px-4 py-3 border-t bg-gray-700">
+            <div className="grid grid-cols-2 gap-2 p-3 border-t bg-gray-700">
               <button
                 onClick={() => handleEdit(pooja)}
-                className="w-full sm:w-auto px-4 py-2 rounded-md bg-blue-500 text-white text-sm font-medium shadow-sm hover:bg-blue-600 active:scale-95 transition"
+                className="w-full px-2 py-2 rounded-md bg-blue-500 text-white text-xs font-semibold shadow-sm hover:bg-blue-600 active:scale-95 transition"
               >
                 Edit
               </button>
               <button
-                className="w-full sm:w-auto px-4 py-2 rounded-md bg-orange-500 text-white text-sm font-medium shadow-sm hover:bg-orange-600 active:scale-95 transition text-center"
+                className="w-full px-2 py-2 rounded-md bg-orange-500 text-white text-xs font-semibold shadow-sm hover:bg-orange-600 active:scale-95 transition text-center"
                 onClick={() => handlePoojaItems(pooja)}
               >
                 Update items
               </button>
               <button
-                onClick={() => console.log("Delete", pooja.id)}
-                className="w-full sm:w-auto px-4 py-2 rounded-md bg-red-500 text-white text-sm font-medium shadow-sm hover:bg-red-600 active:scale-95 transition"
+                className="w-full px-2 py-2 rounded-md bg-yellow-600 text-white text-xs font-semibold shadow-sm hover:bg-yellow-700 active:scale-95 transition text-center"
+                onClick={() => handlePoojaNivedyams(pooja)}
+              >
+                Nivedyams
+              </button>
+              <button
+                onClick={() => {
+                  if (window.confirm("Are you sure you want to delete this Pooja?")) {
+                    console.log("Delete", pooja.id);
+                  }
+                }}
+                className="w-full px-2 py-2 rounded-md bg-red-500 text-white text-xs font-semibold shadow-sm hover:bg-red-600 active:scale-95 transition"
               >
                 Delete
               </button>
@@ -348,6 +369,15 @@ const Poojas = () => {
             }`}
         >
           <PoojaItemsForm pooja={selectedPooja} onClose={closeModal} />
+        </Modal>
+      )}
+      {showPoojaNivedyamDialog && (
+        <Modal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          title={`Update Pooja Nivedyams - ${selectedPooja ? selectedPooja.name : ""}`}
+        >
+          <PoojaNivedyamsForm pooja={selectedPooja} onClose={closeModal} />
         </Modal>
       )}
     </div>
